@@ -9,13 +9,24 @@ import {
 } from "react-icons/pi";
 import { LuFileJson, LuUndo2, LuRedo2 } from "react-icons/lu";
 import { FC } from "react";
+import Modal from "./Modal";
+import { IoIosClose } from "react-icons/io";
 
 interface HeaderProps {
-  editor: Editor | null;
+  editor: any;
   onModal: () => void;
+  onDownload: (fileName: string) => void;
+  isModal: boolean;
+  onNewData: (data: any) => void;
 }
 
-const Header: FC<HeaderProps> = ({ editor, onModal }) => {
+const Header: FC<HeaderProps> = ({
+  editor,
+  onModal,
+  onDownload,
+  isModal,
+  onNewData,
+}) => {
   if (!editor) {
     return null;
   }
@@ -119,10 +130,26 @@ const Header: FC<HeaderProps> = ({ editor, onModal }) => {
         />
         <p className="text-xl font-bold">Doclite</p>
       </div>
-      <button type="button" onClick={onModal} className="btn btn-neutral">
-        Save as
-        <LuFileJson className="text-xl" />
-      </button>
+      <div className="flex gap-4">
+        <input
+          type="file"
+          className="file-input file-input-bordered"
+          onChange={(e) => onNewData(e)}
+        />
+        <div className="relative">
+          {!isModal ? (
+            <button type="button" onClick={onModal} className="btn btn-neutral">
+              Save as
+              <LuFileJson className="text-xl" />
+            </button>
+          ) : (
+            <button type="button" onClick={onModal} className="btn btn-neutral">
+              <IoIosClose className="text-2xl" />
+            </button>
+          )}
+          <Modal onDownload={onDownload} onModal={onModal} isModal={isModal} />
+        </div>
+      </div>
     </div>
   );
 };

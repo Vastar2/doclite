@@ -4,11 +4,10 @@ import StarterKit from "@tiptap/starter-kit";
 import Header from "./Header";
 import CommentsArea from "./CommentsArea";
 import Underline from "@tiptap/extension-underline";
-import { useState } from "react";
-import Modal from "./Modal";
+import { useState, ChangeEvent } from "react";
 
 const TipTapEditor = () => {
-  const [editorContent, setEditerContent] = useState("");
+  const [editorContent, setEditorContent] = useState("");
   const [isModal, setIsModal] = useState(false);
   const editor = useEditor({
     extensions: [StarterKit.configure(), Underline],
@@ -20,7 +19,7 @@ const TipTapEditor = () => {
       },
     },
     onUpdate({ editor }) {
-      setEditerContent(editor.getHTML());
+      setEditorContent(editor.getHTML());
     },
   });
 
@@ -37,14 +36,32 @@ const TipTapEditor = () => {
     link.click();
   };
 
+  const onNewData = (e: ChangeEvent<HTMLInputElement>) => {
+    const onReaderLoad = (e: ChangeEvent<HTMLInputElement>) => {
+      var result = JSON.parse(e.target.result);
+      setEditorContent(result);
+    };
+
+    var reader = new FileReader();
+    reader.onload = onReaderLoad;
+    reader.readAsText(e.target.files[0]);
+  };
+
+  console.log(1234, editorContent);
+
   return (
     <>
       <div className="pt-24 pb-4 w-[1200px] ml-auto mr-auto flex justify-between relative">
-        <Header editor={editor} onModal={() => setIsModal(!isModal)} />
+        <Header
+          editor={editor}
+          onModal={() => setIsModal(!isModal)}
+          onDownload={onDownload}
+          isModal={isModal}
+          onNewData={onNewData}
+        />
         <EditorContent editor={editor} />
         <CommentsArea />
       </div>
-      <Modal onDownload={onDownload} onModal={() => setIsModal(!isModal)} />
     </>
   );
 };
