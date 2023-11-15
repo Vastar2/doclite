@@ -1,9 +1,115 @@
+"use client";
 import Image from "next/image";
+import {
+  PiTextTBold,
+  PiTextItalic,
+  PiTextUnderlineLight,
+  PiTextStrikethroughBold,
+  PiTextHFill,
+} from "react-icons/pi";
+import { LuFileJson, LuUndo2, LuRedo2 } from "react-icons/lu";
+import { FC } from "react";
 
-const Header = () => {
+interface HeaderProps {
+  editor: Editor | null;
+  onModal: () => void;
+}
+
+const Header: FC<HeaderProps> = ({ editor, onModal }) => {
+  if (!editor) {
+    return null;
+  }
+
   return (
-    <div className="flex items-center justify-between bg-red-400 w-[1200px] px-6 h-14 fixed top-6 left-1/2 -translate-x-1/2 z-20">
-      <div className="flex items-end gap-4">
+    <div className="drawer flex items-center justify-between w-[1200px] h-14 fixed top-6 left-1/2 -translate-x-1/2 z-20">
+      <ul className="flex items-center gap-4">
+        <li className="flex items-center">
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().undo().run()}
+            disabled={!editor.can().chain().focus().undo().run()}
+            className="btn btn-neutral"
+          >
+            <LuUndo2 className="text-xl" />
+          </button>
+        </li>
+        <li className="flex items-center">
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().redo().run()}
+            disabled={!editor.can().chain().focus().redo().run()}
+            className="btn btn-neutral"
+          >
+            <LuRedo2 className="text-xl" />
+          </button>
+        </li>
+        <li className="flex items-center">
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            disabled={!editor.can().chain().focus().toggleBold().run()}
+            className={
+              editor.isActive("bold") ? "btn btn-primary " : "btn btn-neutral "
+            }
+          >
+            <PiTextTBold className="text-xl" />
+          </button>
+        </li>
+        <li className="flex items-center">
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            disabled={!editor.can().chain().focus().toggleItalic().run()}
+            className={
+              editor.isActive("italic") ? "btn btn-primary" : "btn btn-neutral"
+            }
+          >
+            <PiTextItalic className="text-xl" />
+          </button>
+        </li>
+        <li className="flex items-center">
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            disabled={!editor.can().chain().focus().toggleUnderline().run()}
+            className={
+              editor.isActive("underline")
+                ? "btn btn-primary"
+                : "btn btn-neutral"
+            }
+          >
+            <PiTextUnderlineLight className="text-xl" />
+          </button>
+        </li>
+        <li className="flex items-center">
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+            disabled={!editor.can().chain().focus().toggleStrike().run()}
+            className={
+              editor.isActive("strike") ? "btn btn-primary" : "btn btn-neutral"
+            }
+          >
+            <PiTextStrikethroughBold className="text-xl" />
+          </button>
+        </li>
+        <li className="flex items-center">
+          <button
+            type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 1 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 1 })
+                ? "btn btn-primary"
+                : "btn btn-neutral"
+            }
+          >
+            <PiTextHFill className="text-xl" />
+          </button>
+        </li>
+      </ul>
+      <div className="flex items-end gap-4 absolute left-1/2 -translate-x-1/2">
         <Image
           src="/logo.png"
           alt="Editor Logo"
@@ -13,23 +119,10 @@ const Header = () => {
         />
         <p className="text-xl font-bold">Doclite</p>
       </div>
-      <ul className="flex items-center gap-4">
-        <li className="flex items-center">
-          <button className="">bold</button>
-        </li>
-        <li className="flex items-center">
-          <button>italic</button>
-        </li>
-        <li className="flex items-center">
-          <button>underline</button>
-        </li>
-        <li className="flex items-center">
-          <button>strikethrough</button>
-        </li>
-        <li className="flex items-center">
-          <button>headers</button>
-        </li>
-      </ul>
+      <button type="button" onClick={onModal} className="btn btn-neutral">
+        Save as
+        <LuFileJson className="text-xl" />
+      </button>
     </div>
   );
 };
