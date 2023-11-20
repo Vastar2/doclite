@@ -20,3 +20,7 @@ body {
   color: rgb(56, 56, 56);
   background: #fff;
 }
+
+[data-comment-id] {
+  background-color: #ffddab;
+}

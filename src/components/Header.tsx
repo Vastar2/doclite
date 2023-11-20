@@ -11,13 +11,14 @@ import { LuFileJson, LuUndo2, LuRedo2 } from "react-icons/lu";
 import { FC } from "react";
 import Modal from "./Modal";
 import { IoIosClose } from "react-icons/io";
+import { ChangeEvent } from "react";
 
 interface HeaderProps {
   editor: any;
   onModal: () => void;
   onDownload: (fileName: string) => void;
   isModal: boolean;
-  onNewData: (data: any) => void;
+  onNewData: (data: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Header: FC<HeaderProps> = ({

@@ -6,7 +6,7 @@ interface ModalProps {
   isModal: boolean;
 }
 
-const Modal: FC<ModalProps> = ({ onDownload, onModal, isModal }) => {
+const Modal: FC<ModalProps> = ({ onDownload, isModal }) => {
   const [fileName, setFileName] = useState("");
 
   if (!isModal) return null;
