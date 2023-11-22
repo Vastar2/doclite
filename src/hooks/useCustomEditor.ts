@@ -43,9 +43,10 @@ export const useCustomEditor = (
       },
     },
     onUpdate({ editor }) {
-      setEditorContent((prev: any) => {
-        return { ...prev, textContent: editor.getHTML() };
-      });
+      setEditorContent((prev: any) => ({
+        ...prev,
+        textContent: editor.getHTML(),
+      }));
     },
   });
 

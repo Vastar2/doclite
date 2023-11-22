@@ -2,7 +2,6 @@ import { FC, useState } from "react";
 
 interface ModalProps {
   onDownload: (fileName: string) => void;
-  onModal: () => void;
   isModal: boolean;
 }
 

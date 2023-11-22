@@ -15,7 +15,7 @@ import { ChangeEvent } from "react";
 
 interface HeaderProps {
   editor: any;
-  onModal: () => void;
+  onToggleModal: () => void;
   onDownload: (fileName: string) => void;
   isModal: boolean;
   onNewData: (data: ChangeEvent<HTMLInputElement>) => void;
@@ -23,7 +23,7 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({
   editor,
-  onModal,
+  onToggleModal,
   onDownload,
   isModal,
   onNewData,
@@ -139,16 +139,24 @@ const Header: FC<HeaderProps> = ({
         />
         <div className="relative">
           {!isModal ? (
-            <button type="button" onClick={onModal} className="btn btn-neutral">
+            <button
+              type="button"
+              onClick={onToggleModal}
+              className="btn btn-neutral"
+            >
               Save as
               <LuFileJson className="text-xl" />
             </button>
           ) : (
-            <button type="button" onClick={onModal} className="btn btn-neutral">
+            <button
+              type="button"
+              onClick={onToggleModal}
+              className="btn btn-neutral"
+            >
               <IoIosClose className="text-2xl" />
             </button>
           )}
-          <Modal onDownload={onDownload} onModal={onModal} isModal={isModal} />
+          <Modal onDownload={onDownload} isModal={isModal} />
         </div>
       </div>
     </div>

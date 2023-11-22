@@ -21,7 +21,7 @@ const CommentsArea: FC<CommentsAreaProps> = ({
 }) => {
   return (
     <ul className="rounded-xl bg-gray-100 sticky top-24 w-[284px]  p-6 h-[calc(100vh-112px)] overflow-y-auto">
-      {!!comments && comments.length ? (
+      {comments.length ? (
         comments.map((comment) => (
           <li
             key={comment.id}

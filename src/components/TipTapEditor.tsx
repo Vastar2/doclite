@@ -17,8 +17,9 @@ const TipTapEditor = () => {
     textContent: "",
     comments: [],
   });
-  const [isModal, setIsModal] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
+  const [commentTimer, setCommentTimer] = useState<NodeJS.Timeout | null>(null);
   const commentsSectionRef = useRef<HTMLDivElement | null>(null);
   const editor = useCustomEditor(
     setActiveCommentId,
@@ -33,7 +34,7 @@ const TipTapEditor = () => {
     focusCommentWithActiveId(activeCommentId, commentsSectionRef);
   }, [activeCommentId]);
 
-  const onDownload = (fileName: string) => {
+  const handleDownload = (fileName: string) => {
     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
       JSON.stringify(editorContent)
     )}`;
@@ -43,10 +44,10 @@ const TipTapEditor = () => {
     link.download = `${fileName}.json`;
     link.click();
 
-    setIsModal(false);
+    setIsOpenModal(false);
   };
 
-  const onNewData = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleNewData = (e: ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
     if (files && files[0]) {
       const onReaderLoad = (e: ProgressEvent<FileReader>) => {
@@ -67,7 +68,8 @@ const TipTapEditor = () => {
     }
   };
 
-  const onSetComment = () => {
+  const handleSetComment = () => {
+    if (!activeCommentId) return;
     const newComment = {
       id: `a${v4()}a`,
       content: "",
@@ -75,45 +77,53 @@ const TipTapEditor = () => {
       createdAt: new Date(),
     };
 
-    setEditorContent((prev) => {
-      return { ...prev, comments: [...prev.comments, newComment] };
-    });
+    setEditorContent((prev) => ({
+      ...prev,
+      comments: [...prev.comments, newComment],
+    }));
 
     editor?.commands.setComment(newComment.id);
     setActiveCommentId(newComment.id);
-    setTimeout(focusCommentWithActiveId);
+    const timerId = setTimeout(() => {
+      focusCommentWithActiveId(activeCommentId, commentsSectionRef);
+    });
+    setCommentTimer(timerId);
   };
+
+  useEffect(() => {
+    return () => {
+      if (commentTimer) {
+        clearTimeout(commentTimer);
+      }
+    };
+  }, [commentTimer]);
 
   return (
     <div className="pt-24 pb-4 w-[1200px] ml-auto mr-auto flex justify-between relative">
       <Header
         editor={editor}
-        onModal={() => setIsModal(!isModal)}
-        onDownload={onDownload}
-        isModal={isModal}
-        onNewData={onNewData}
+        onToggleModal={() => setIsOpenModal(!isOpenModal)}
+        onDownload={handleDownload}
+        isModal={isOpenModal}
+        onNewData={handleNewData}
       />
       <EditorContent editor={editor} />
       <CommentsArea
         comments={editorContent.comments}
         activeCommentId={activeCommentId}
-        onSetComments={(newComments) =>
-          setEditorContent((prev) => {
-            return { ...prev, comments: newComments };
-          })
-        }
+        onSetComments={(newComments) => {
+          setEditorContent((prev) => ({ ...prev, comments: newComments }));
+        }}
         onSetActiveCommentId={(value) => setActiveCommentId(value)}
         editor={editor}
         onDeleteComment={(id) =>
-          setEditorContent((prev) => {
-            return {
-              ...prev,
-              comments: prev.comments.filter((item) => item.id !== id),
-            };
-          })
+          setEditorContent((prev) => ({
+            ...prev,
+            comments: prev.comments.filter((item) => item.id !== id),
+          }))
         }
       />
-      <BubbleModal editor={editor} onSetComment={onSetComment} />
+      <BubbleModal editor={editor} onSetComment={handleSetComment} />
     </div>
   );
 };
